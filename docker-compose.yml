@@ -1,0 +1,25 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PW}
+      POSTGRES_DB: ${PG_DB}
+    ports:
+      - 5432:5432
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  api:
+    build: ./
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    environment:
+      FLASK_ENV: development
+      DATABASE_URL: postgresql://${PG_USER}:${PG_PW}@db/${PG_DB}
+    volumes:
+      - ./:/app
+    depends_on:
+      - db
+    command: flask run --host=0.0.0.0 --with-threads --reload

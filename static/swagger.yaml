@@ -1,0 +1,226 @@
+swagger: '2.0'
+info:
+  title: Task Management API
+  version: 1.0.0
+  description: API para gerenciar usuários e tarefas com autenticação JWT.
+host: localhost:5000
+basePath: /
+schemes:
+  - http
+
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: "JWT Authorization header using the Bearer scheme. Example: 'Authorization: Bearer {token}'"
+
+paths:
+  /user:
+    get:
+      summary: Retorna uma lista de todos os usuários
+      responses:
+        200:
+          description: Lista de usuários
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+        401:
+          description: Não autorizado
+    post:
+      summary: Cria um novo usuário
+      parameters:
+        - name: username
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserCreate'
+      responses:
+        201:
+          description: Usuário criado
+        400:
+          description: Requisição inválida
+        409:
+          description: Usuário já existe
+  /user/login:
+    post:
+      summary: Login do usuário e retorna um JWT
+      parameters:
+        - name: login
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Login'
+      responses:
+        200:
+          description: Login bem sucedido
+        401:
+          description: Login inválido
+  /user/{user_id}:
+    get:
+      summary: Retorna detalhes de um único usuário
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Detalhes do usuário
+          schema:
+            $ref: '#/definitions/User'
+        404:
+          description: Usuário não encontrado
+    put:
+      summary: Atualiza um usuário
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          type: string
+        - name: user
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserUpdate'
+      responses:
+        200:
+          description: Usuário atualizado
+        404:
+          description: Usuário não encontrado
+    delete:
+      summary: Deleta um usuário
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Usuário deletado
+        404:
+          description: Usuário não encontrado
+  /task:
+    get:
+      summary: Retorna uma lista de todas as tarefas
+      responses:
+        200:
+          description: Lista de tarefas
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Task'
+    post:
+      summary: Cria uma nova tarefa
+      parameters:
+        - name: task
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/TaskCreate'
+      responses:
+        201:
+          description: Tarefa criada
+        400:
+          description: Requisição inválida
+  /task/{task_id}:
+    get:
+      summary: Retorna detalhes de uma única tarefa
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Detalhes da tarefa
+          schema:
+            $ref: '#/definitions/Task'
+        404:
+          description: Tarefa não encontrada
+    put:
+      summary: Atualiza uma tarefa
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          type: string
+        - name: task
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/TaskUpdate'
+      responses:
+        200:
+          description: Tarefa atualizada
+        404:
+          description: Tarefa não encontrada
+    delete:
+      summary: Deleta uma tarefa
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Tarefa deletada
+        404:
+          description: Tarefa não encontrada
+
+definitions:
+  User:
+    type: object
+    properties:
+      id:
+        type: string
+      username:
+        type: string
+  UserCreate:
+    type: object
+    properties:
+      username:
+        type: string
+      password:
+        type: string
+  UserUpdate:
+    type: object
+    properties:
+      username:
+        type: string
+      password:
+        type: string
+  Task:
+    type: object
+    properties:
+      id:
+        type: string
+      title:
+        type: string
+      description:
+        type: string
+  TaskCreate:
+    type: object
+    properties:
+      title:
+        type: string
+      description:
+        type: string
+  TaskUpdate:
+    type: object
+    properties:
+      title:
+        type: string
+      description:
+        type: string
+  Login:
+    type: object
+    properties:
+      username:
+        type: string
+      password:
+        type: string
+
+security:
+  - Bearer: []
